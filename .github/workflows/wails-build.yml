@@ -15,10 +15,89 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
- 
-  # Ubuntu 22.04 构建
+  # Windows 10 构建（官方运行器）
+  build-windows-10:
+    runs-on: windows-2022  # GitHub 官方 Windows 10 镜像（2022 对应 Win10）
+    env:
+        pwd: ${{ secrets.ZIP_PWD }}  
+        opt: zip  
+        source: ${{ github.workspace }}/wails-study/build/bin
+        destination: ${{ github.workspace }}/bundle.zip
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'  # 适配 Wails 的 Go 版本
+          cache: true
+
+      - name: Install Wails CLI
+        run: |
+               go install github.com/wailsapp/wails/v2/cmd/wails@latest
+               wails version
+
+      # - name: Install Windows build dependencies
+      #   run: |
+      #     choco install -y gcc make
+      #     refreshenv
+# url中不加用户名时，默认是使用本repo的用户名，也可以成功clone下来  
+# 生成 token: https://github.com/settings/tokens
+# BUILD_GITHUB_TOKEN 须在本repo下settings/secrets/actions 配置 New rpository BUILD_GITHUB_TOKEN
+
+      - name: Download private repo
+        run: |
+          echo "workspace----------------------------------------------------------------"
+          echo "${{ github.workspace }}"
+          cd ${{ github.workspace }}
+          git clone https://${{ secrets.BUILD_GITHUB_TOKEN }}@github.com/kuaileniu/wails-study.git
+
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Display cloud drive
+        run: |
+            echo "wails-study下的文件"
+            ls  ${{ github.workspace }}/wails-study
+
+      - name: Build Wails project
+        run: |
+                cd wails-study
+                wails build -platform windows/amd64
+                ls build/bin
+        env:
+          CGO_ENABLED: 1
+
+      
+      - name: Download zip(archiver) repo and make zip package
+      # git clone https://${{ secrets.BUILD_GITHUB_TOKEN }}@github.com/kuaileniu/archiver.git
+        run: |
+          cd ${{ github.workspace }} 
+
+          echo "Download当前位置"
+          pwd
+          
+          git clone --branch v1.0.0 --single-branch https://${{ secrets.BUILD_GITHUB_TOKEN }}@github.com/kuaileniu/archiver.git
+          cd ${{ github.workspace }}/archiver
+          
+          echo "当前位置,期望是    xxx/archiver"
+          pwd
+          echo "archiver目录下的文件"
+          ls
+          go env -w GOPRIVATE="github.com/kuaileniu"
+          git config --global url."https://kuaileniu:${{ secrets.BUILD_GITHUB_TOKEN }}@github.com".insteadOf "https://github.com"
+          go mod tidy
+          go run main.go    
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: study_${{ runner.os }}-10
+          path: ${{ github.workspace }}/bundle.zip
+  
+  # Ubuntu 22.04 构建，2026-01-21 最低支持到 Ubuntu 22.04
   build-ubuntu-22-04:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
         pwd: ${{ secrets.ZIP_PWD }}  
         opt: zip  
