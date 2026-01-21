@@ -92,7 +92,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: study_${{ runner.os }}
+          name: study_${{ runner.os }}-10
           path: ${{ github.workspace }}/bundle.zip
 
   # Windows 7 构建（自托管运行器）
@@ -172,7 +172,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: study_${{ runner.os }}
+          name: study_${{ runner.os }}-7
           path: ${{ github.workspace }}/bundle.zip
 
   # Ubuntu 20.04 构建
