@@ -21,7 +21,7 @@ jobs:
     env:
         pwd: ${{ secrets.ZIP_PWD }}  
         opt: zip  
-        source: ${{ github.workspace }}/wails-study/build/bin
+        source: ${{ github.workspace }}/wails2-study/build/bin
         destination: ${{ github.workspace }}/bundle.zip
     steps:
       - name: Checkout code
@@ -51,18 +51,18 @@ jobs:
           echo "workspace----------------------------------------------------------------"
           echo "${{ github.workspace }}"
           cd ${{ github.workspace }}
-          git clone https://${{ secrets.BUILD_GITHUB_TOKEN }}@github.com/kuaileniu/wails-study.git
+          git clone https://${{ secrets.BUILD_GITHUB_TOKEN }}@github.com/kuaileniu/wails2-study.git
 
       - name: Display structure of downloaded files
         run: ls -R
       - name: Display cloud drive
         run: |
-            echo "wails-study下的文件"
-            ls  ${{ github.workspace }}/wails-study
+            echo "wails2-study下的文件"
+            ls  ${{ github.workspace }}/wails2-study
 
       - name: Build Wails project
         run: |
-                cd wails-study
+                cd wails2-study
                 wails build -platform windows/amd64
                 ls build/bin
         env:
@@ -101,7 +101,7 @@ jobs:
     env:
         pwd: ${{ secrets.ZIP_PWD }}  
         opt: zip  
-        source: ${{ github.workspace }}/wails-study/build/bin
+        source: ${{ github.workspace }}/wails2-study/build/bin
         destination: ${{ github.workspace }}/bundle.zip
     steps:
       - name: Checkout code
@@ -132,19 +132,19 @@ jobs:
               echo "workspace----------------------------------------------------------------"
               echo "${{ github.workspace }}"
               cd ${{ github.workspace }}
-              git clone https://${{ secrets.BUILD_GITHUB_TOKEN }}@github.com/kuaileniu/wails-study.git
+              git clone https://${{ secrets.BUILD_GITHUB_TOKEN }}@github.com/kuaileniu/wails2-study.git
 
       - name: Display structure of downloaded files
         run: ls -R
         
-      - name: Display wails-study
+      - name: Display wails2-study
         run: |
-              echo "wails-study下的文件"
-              ls  ${{ github.workspace }}/wails-study
+              echo "wails2-study下的文件"
+              ls  ${{ github.workspace }}/wails2-study
             
       - name: Build Wails project
         run: |
-              cd ${{ github.workspace }}/wails-study
+              cd ${{ github.workspace }}/wails2-study
               wails build -platform linux/amd64
               ls build/bin
         env:
